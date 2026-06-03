@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>@ViewData["Title"] – CareLink AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"/>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>tailwind.config={theme:{extend:{colors:{brand:{50:'#eff6ff',100:'#dbeafe',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8'},teal:{400:'#2dd4bf',500:'#14b8a6',600:'#0d9488'}}}}}</script>
+  <style>
+    body{font-family:'Inter',sans-serif;}
+    .glass{background:rgba(255,255,255,0.12);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.2);}
+    .nav-link{position:relative;} .nav-link::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:2px;background:#3b82f6;transition:width .3s;} .nav-link:hover::after{width:100%;}
+    .card-hover{transition:all .3s cubic-bezier(.4,0,.2,1);} .card-hover:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(59,130,246,.15);}
+    .btn-primary{background:linear-gradient(135deg,#2563eb,#0d9488);transition:all .3s;} .btn-primary:hover{transform:translateY(-1px);box-shadow:0 10px 25px rgba(37,99,235,.4);}
+    #chatWidget{position:fixed;bottom:24px;right:24px;z-index:1000;}
+    #chatBox{display:none;width:360px;height:480px;flex-direction:column;background:white;border-radius:20px;box-shadow:0 25px 60px rgba(0,0,0,.2);overflow:hidden;}
+    #chatMessages{flex:1;overflow-y:auto;padding:16px;scroll-behavior:smooth;}
+    .msg-user{background:#2563eb;color:white;border-radius:16px 16px 4px 16px;padding:10px 14px;max-width:80%;margin-left:auto;margin-bottom:8px;font-size:14px;}
+    .msg-ai{background:#f1f5f9;color:#1e293b;border-radius:16px 16px 16px 4px;padding:10px 14px;max-width:85%;margin-bottom:8px;font-size:14px;line-height:1.5;}
+    .crisis-banner{background:linear-gradient(135deg,#dc2626,#991b1b);color:white;padding:12px 16px;border-radius:12px;margin-bottom:8px;font-size:13px;}
+    .typing{display:flex;gap:4px;padding:10px 14px;background:#f1f5f9;border-radius:16px;width:fit-content;}
+    .dot{width:8px;height:8px;background:#94a3b8;border-radius:50%;animation:bounce 1.2s infinite;} .dot:nth-child(2){animation-delay:.2s;} .dot:nth-child(3){animation-delay:.4s;}
+    @@keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-6px);}}
+    @@keyframes countUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+    .count-animate{animation:countUp .5s ease forwards;}
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+
+<!-- NAV -->
+<nav class="bg-white/95 backdrop-blur border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <a asp-controller="Home" asp-action="Index" class="flex items-center gap-2.5">
+        <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-teal-500 rounded-lg flex items-center justify-center shadow-sm">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+        </div>
+        <span class="font-bold text-xl text-gray-900">CareLink <span class="text-blue-600">AI</span></span>
+      </a>
+      <div class="hidden md:flex items-center gap-8">
+        <a asp-controller="Home" asp-action="Index" class="nav-link text-gray-600 hover:text-blue-600 font-medium text-sm transition">Home</a>
+        <a asp-controller="Services" asp-action="Index" class="nav-link text-gray-600 hover:text-blue-600 font-medium text-sm transition">Services</a>
+        <a asp-controller="Services" asp-action="AiMatch" class="nav-link text-gray-600 hover:text-blue-600 font-medium text-sm transition">AI Match</a>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+          <a asp-controller="Services" asp-action="Create" class="nav-link text-gray-600 hover:text-blue-600 font-medium text-sm transition">Add Service</a>
+          <form asp-area="Identity" asp-page="/Account/Logout" method="post" class="inline">
+            <button class="text-sm font-medium text-red-600 hover:text-red-700 transition">Sign Out</button>
+          </form>
+        }
+        else
+        {
+          <a asp-area="Identity" asp-page="/Account/Login" class="text-sm font-medium text-gray-600 hover:text-blue-600 transition">Sign In</a>
+          <a asp-area="Identity" asp-page="/Account/Register" class="btn-primary text-white text-sm font-semibold px-5 py-2.5 rounded-xl">Get Started</a>
+        }
+      </div>
+      <button id="menuBtn" class="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </div>
+  <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100 px-4 py-4 space-y-3">
+    <a asp-controller="Home" asp-action="Index" class="block text-gray-700 font-medium py-1.5">Home</a>
+    <a asp-controller="Services" asp-action="Index" class="block text-gray-700 font-medium py-1.5">Services</a>
+    <a asp-controller="Services" asp-action="AiMatch" class="block text-gray-700 font-medium py-1.5">AI Match</a>
+    @if (User.Identity?.IsAuthenticated == true) {
+      <a asp-controller="Services" asp-action="Create" class="block text-gray-700 font-medium py-1.5">Add Service</a>
+    } else {
+      <a asp-area="Identity" asp-page="/Account/Login" class="block text-gray-700 font-medium py-1.5">Sign In</a>
+      <a asp-area="Identity" asp-page="/Account/Register" class="block text-blue-600 font-semibold py-1.5">Get Started</a>
+    }
+  </div>
+</nav>
+
+@if (TempData["Success"] != null)
+{
+  <div class="max-w-7xl mx-auto px-4 mt-4">
+    <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-xl flex items-center gap-2 text-sm">
+      <svg class="w-4 h-4 text-green-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+      @TempData["Success"]
+    </div>
+  </div>
+}
+
+<main class="flex-1">@RenderBody()</main>
+
+<!-- FOOTER -->
+<footer class="bg-gray-900 text-gray-300 mt-20">
+  <div class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    <div>
+      <div class="flex items-center gap-2 mb-3">
+        <div class="w-7 h-7 bg-gradient-to-br from-blue-500 to-teal-400 rounded-lg flex items-center justify-center">
+          <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+        </div>
+        <span class="font-bold text-white text-lg">CareLink AI</span>
+      </div>
+      <p class="text-sm text-gray-400 leading-relaxed">AI-powered community services navigator helping vulnerable Australians find support.</p>
+    </div>
+    <div>
+      <h4 class="font-semibold text-white mb-3 text-sm uppercase tracking-wide">Services</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a asp-controller="Services" asp-action="Index" asp-route-category="Health" class="hover:text-white transition">Health</a></li>
+        <li><a asp-controller="Services" asp-action="Index" asp-route-category="Mental Health" class="hover:text-white transition">Mental Health</a></li>
+        <li><a asp-controller="Services" asp-action="Index" asp-route-category="Housing" class="hover:text-white transition">Housing</a></li>
+        <li><a asp-controller="Services" asp-action="Index" asp-route-category="Food" class="hover:text-white transition">Food Relief</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-semibold text-white mb-3 text-sm uppercase tracking-wide">Tools</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a asp-controller="Services" asp-action="AiMatch" class="hover:text-white transition">AI Matcher</a></li>
+        <li><a asp-controller="Services" asp-action="Index" class="hover:text-white transition">Browse Services</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-semibold text-white mb-3 text-sm uppercase tracking-wide">Crisis Lines</h4>
+      <ul class="space-y-2 text-sm">
+        <li>Lifeline: <a href="tel:131114" class="text-blue-400 hover:text-white font-medium">13 11 14</a></li>
+        <li>Beyond Blue: <a href="tel:1300224636" class="text-blue-400 hover:text-white font-medium">1300 22 4636</a></li>
+        <li>Kids Helpline: <a href="tel:1800551800" class="text-blue-400 hover:text-white font-medium">1800 55 1800</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-gray-800 text-center py-4 text-xs text-gray-500">
+    &copy; 2026 CareLink AI &mdash; Built with ASP.NET Core &amp; Tailwind CSS &mdash; Powered by DeepSeek AI via OpenRouter
+  </div>
+</footer>
+
+<!-- AI CHATBOT WIDGET -->
+<div id="chatWidget">
+  <div id="chatBox" class="flex flex-col mb-4">
+    <div class="bg-gradient-to-r from-blue-600 to-teal-500 px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center gap-2">
+        <div class="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></div>
+        <span class="text-white font-semibold text-sm">CareLink AI Assistant</span>
+      </div>
+      <button id="closeChatBtn" class="text-white/80 hover:text-white">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="chatMessages" class="flex-1 overflow-y-auto p-4">
+      <div class="msg-ai">Hi! I am CareLink AI. I can help you find community services, answer questions about support options, or just listen. How can I help you today?</div>
+    </div>
+    <div class="p-3 border-t border-gray-100 flex gap-2">
+      <input id="chatInput" type="text" placeholder="Type your message..." maxlength="500"
+             class="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+      <button id="chatSendBtn" class="btn-primary text-white px-4 py-2 rounded-xl text-sm font-semibold">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+      </button>
+    </div>
+  </div>
+  <button id="openChatBtn" class="btn-primary text-white w-14 h-14 rounded-full flex items-center justify-center shadow-2xl ml-auto">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+  </button>
+</div>
+
+<script>
+AOS.init({duration:700,once:true,easing:'ease-out-cubic'});
+document.getElementById('menuBtn').addEventListener('click',()=>document.getElementById('mobileMenu').classList.toggle('hidden'));
+
+// Animated counters
+document.querySelectorAll('[data-count]').forEach(el=>{
+  const target=+el.dataset.count, duration=1500;
+  let start=null;
+  const step=ts=>{
+    if(!start) start=ts;
+    const p=Math.min((ts-start)/duration,1);
+    el.textContent=Math.floor(p*target)+(p<1?'':'+');
+    if(p<1) requestAnimationFrame(step);
+  };
+  const obs=new IntersectionObserver(entries=>{
+    if(entries[0].isIntersecting){requestAnimationFrame(step);obs.disconnect();}
+  });
+  obs.observe(el);
+});
+
+// Chat widget
+const chatBox=document.getElementById('chatBox');
+const openBtn=document.getElementById('openChatBtn');
+const closeBtn=document.getElementById('closeChatBtn');
+const msgs=document.getElementById('chatMessages');
+const input=document.getElementById('chatInput');
+const sendBtn=document.getElementById('chatSendBtn');
+let chatHistory='';
+
+openBtn.addEventListener('click',()=>{chatBox.style.display='flex';openBtn.style.display='none';});
+closeBtn.addEventListener('click',()=>{chatBox.style.display='none';openBtn.style.display='flex';});
+
+async function sendChat(){
+  const msg=input.value.trim(); if(!msg) return;
+  msgs.innerHTML+=`<div class="msg-user">${msg}</div>`;
+  const typing=document.createElement('div');
+  typing.className='typing'; typing.innerHTML='<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+  msgs.appendChild(typing); msgs.scrollTop=msgs.scrollHeight; input.value='';
+  try{
+    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg,history:chatHistory})});
+    const data=await res.json();
+    typing.remove();
+    if(data.isCrisis) msgs.innerHTML+=`<div class="crisis-banner"><strong>If you are in immediate danger, please call 000.</strong> Crisis support: Lifeline 13 11 14 | Beyond Blue 1300 22 4636</div>`;
+    msgs.innerHTML+=`<div class="msg-ai">${data.reply}</div>`;
+    chatHistory=(chatHistory+' '+msg).slice(-300);
+  }catch(e){typing.remove();msgs.innerHTML+=`<div class="msg-ai">Something went wrong. Please try again.</div>`;}
+  msgs.scrollTop=msgs.scrollHeight;
+}
+sendBtn.addEventListener('click',sendChat);
+input.addEventListener('keypress',e=>{if(e.key==='Enter') sendChat();});
+</script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

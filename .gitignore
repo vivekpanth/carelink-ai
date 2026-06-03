@@ -1,0 +1,32 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.swp
+
+## Secrets / environment
+appsettings.Development.json
+appsettings.Production.json
+appsettings.secrets.json
+secrets.json
+.env
+.env.*
+
+## Database (SQLite — regenerated on first run via migrations)
+*.db
+*.db-shm
+*.db-wal
+
+## Screenshots (dev tool)
+screenshots/
+
+## macOS
+.DS_Store
+Thumbs.db
+
+## Rider / VS Code
+.idea/
+.vscode/
+*.DotSettings.user

@@ -1,0 +1,64 @@
+@model CareLink.Models.Service
+@{ViewData["Title"] = "Add Service";}
+<div class="max-w-2xl mx-auto px-4 py-10">
+  <h1 class="text-3xl font-bold mb-6">Add New Service</h1>
+  <div class="bg-white rounded-2xl border border-gray-100 shadow p-8">
+    <form asp-action="Create" method="post">
+      @Html.AntiForgeryToken()
+      <div asp-validation-summary="ModelOnly" class="bg-red-50 text-red-700 rounded-xl px-4 py-3 mb-4 text-sm"></div>
+      <div class="grid sm:grid-cols-2 gap-4 mb-4">
+        <div class="sm:col-span-2">
+          <label asp-for="Title" class="block text-sm font-semibold text-gray-700 mb-1"></label>
+          <input asp-for="Title" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+          <span asp-validation-for="Title" class="text-red-500 text-xs"></span>
+        </div>
+        <div class="sm:col-span-2">
+          <label asp-for="Description" class="block text-sm font-semibold text-gray-700 mb-1"></label>
+          <textarea asp-for="Description" rows="3" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"></textarea>
+          <span asp-validation-for="Description" class="text-red-500 text-xs"></span>
+        </div>
+        <div>
+          <label asp-for="Category" class="block text-sm font-semibold text-gray-700 mb-1"></label>
+          <select asp-for="Category" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <option value="">Select...</option>
+            <option>Health</option><option>Mental Health</option><option>Housing</option>
+            <option>Food</option><option>Employment</option><option>Legal</option>
+          </select>
+        </div>
+        <div>
+          <label asp-for="Phone" class="block text-sm font-semibold text-gray-700 mb-1"></label>
+          <input asp-for="Phone" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+        </div>
+        <div>
+          <label asp-for="Address" class="block text-sm font-semibold text-gray-700 mb-1"></label>
+          <input asp-for="Address" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+        </div>
+        <div>
+          <label asp-for="Suburb" class="block text-sm font-semibold text-gray-700 mb-1"></label>
+          <input asp-for="Suburb" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+        </div>
+        <div>
+          <label asp-for="State" class="block text-sm font-semibold text-gray-700 mb-1"></label>
+          <input asp-for="State" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+        </div>
+        <div>
+          <label asp-for="Website" class="block text-sm font-semibold text-gray-700 mb-1"></label>
+          <input asp-for="Website" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+        </div>
+        <div>
+          <label asp-for="OpeningHours" class="block text-sm font-semibold text-gray-700 mb-1"></label>
+          <input asp-for="OpeningHours" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+        </div>
+        <div>
+          <label asp-for="Tags" class="block text-sm font-semibold text-gray-700 mb-1">Tags (comma-separated)</label>
+          <input asp-for="Tags" placeholder="e.g. health,free,crisis" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+        </div>
+        <div class="flex items-center gap-2 mt-2">
+          <input type="checkbox" asp-for="IsFree" class="w-4 h-4 accent-blue-600"/>
+          <label asp-for="IsFree" class="text-sm font-semibold text-gray-700">Free Service</label>
+        </div>
+      </div>
+      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition">Add Service</button>
+    </form>
+  </div>
+</div>

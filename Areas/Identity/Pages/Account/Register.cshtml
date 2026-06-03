@@ -1,0 +1,92 @@
+@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Create Account";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<div class="min-h-screen grid lg:grid-cols-2">
+  <!-- Left Panel -->
+  <div class="hidden lg:flex relative overflow-hidden">
+    <img src="https://images.unsplash.com/photo-1593113598332-cd288d649433?w=900&auto=format&fit=crop&q=80"
+         class="absolute inset-0 w-full h-full object-cover" alt="Volunteers"/>
+    <div class="absolute inset-0 bg-gradient-to-br from-teal-900/85 to-blue-800/75"></div>
+    <div class="relative z-10 flex flex-col justify-center px-14">
+      <div class="flex items-center gap-3 mb-10">
+        <div class="w-11 h-11 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+        </div>
+        <span class="text-2xl font-bold text-white">CareLink AI</span>
+      </div>
+      <h2 class="text-4xl font-extrabold text-white mb-4 leading-tight">Join the Community<br/><span class="text-teal-300">Making a Difference</span></h2>
+      <p class="text-teal-100 text-lg mb-10 leading-relaxed">Create an account to add and manage community service listings and help connect Australians with vital support.</p>
+      <div class="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/20">
+        <div class="flex gap-3 mb-3">
+          <div class="w-10 h-10 rounded-full bg-teal-400/30 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-teal-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          </div>
+          <div>
+            <p class="text-sm text-teal-100 italic leading-relaxed">"CareLink AI helped me find emergency housing in under 2 minutes when I had nowhere else to turn."</p>
+            <p class="text-xs text-teal-300 font-medium mt-2">Community member, Sydney</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Panel -->
+  <div class="flex items-center justify-center px-8 py-12 lg:px-16 bg-white">
+    <div class="w-full max-w-md">
+      <div class="mb-8">
+        <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Create your account</h1>
+        <p class="text-gray-500">Free forever — no credit card required</p>
+      </div>
+
+      <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 mb-5 text-sm"></div>
+
+        <div class="mb-4">
+          <label asp-for="Input.Email" class="block text-sm font-semibold text-gray-700 mb-1.5">Email address</label>
+          <input asp-for="Input.Email" autocomplete="username" placeholder="you@example.com"
+                 class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 focus:bg-white transition"/>
+          <span asp-validation-for="Input.Email" class="text-red-500 text-xs mt-1 block"></span>
+        </div>
+
+        <div class="mb-4">
+          <label asp-for="Input.Password" class="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
+          <input asp-for="Input.Password" type="password" autocomplete="new-password" placeholder="At least 6 characters, include a number"
+                 class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 focus:bg-white transition"/>
+          <span asp-validation-for="Input.Password" class="text-red-500 text-xs mt-1 block"></span>
+        </div>
+
+        <div class="mb-7">
+          <label asp-for="Input.ConfirmPassword" class="block text-sm font-semibold text-gray-700 mb-1.5">Confirm password</label>
+          <input asp-for="Input.ConfirmPassword" type="password" autocomplete="new-password" placeholder="Re-enter your password"
+                 class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-300 focus:bg-white transition"/>
+          <span asp-validation-for="Input.ConfirmPassword" class="text-red-500 text-xs mt-1 block"></span>
+        </div>
+
+        <button type="submit" class="w-full btn-primary text-white font-bold py-3.5 rounded-xl text-base flex items-center justify-center gap-2 shadow-lg">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          Create Free Account
+        </button>
+      </form>
+
+      <p class="mt-6 text-center text-sm text-gray-500">
+        Already have an account?
+        <a asp-page="./Login" class="text-blue-600 font-semibold hover:underline ml-1">Sign in</a>
+      </p>
+      <div class="mt-8 pt-6 border-t border-gray-100 text-center">
+        <a asp-controller="Home" asp-action="Index" class="text-sm text-gray-400 hover:text-gray-600 inline-flex items-center gap-1.5 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          Back to CareLink AI
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+  <partial name="_ValidationScriptsPartial"/>
+}

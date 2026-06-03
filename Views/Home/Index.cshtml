@@ -1,0 +1,147 @@
+@{ViewData["Title"]="Home";}
+
+<!-- HERO with real background image -->
+<section class="relative min-h-[600px] flex items-center overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-to-br from-blue-900/95 via-blue-800/90 to-teal-700/85 z-10"></div>
+  <img src="https://images.unsplash.com/photo-1559028012-481c04fa702d?w=1600&auto=format&fit=crop&q=80" class="absolute inset-0 w-full h-full object-cover" alt="Community support"/>
+  <div class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 grid lg:grid-cols-2 gap-12 items-center w-full">
+    <div data-aos="fade-right">
+      <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur rounded-full px-4 py-1.5 text-sm font-medium text-white mb-6 border border-white/20">
+        <span class="w-2 h-2 bg-teal-300 rounded-full animate-pulse"></span>
+        Powered by DeepSeek AI via OpenRouter
+      </div>
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6">
+        Find the Help<br/><span class="text-teal-300">You Deserve</span>
+      </h1>
+      <p class="text-lg text-blue-100 mb-8 max-w-lg leading-relaxed">
+        CareLink AI connects vulnerable Australians with health, housing, food, mental health and legal services — using intelligent AI matching to find the right support, fast.
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a asp-controller="Services" asp-action="AiMatch" class="btn-primary text-white px-7 py-3.5 rounded-xl font-bold text-base shadow-xl flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+          Try AI Matcher
+        </a>
+        <a asp-controller="Services" asp-action="Index" class="border-2 border-white/40 hover:bg-white/10 text-white px-7 py-3.5 rounded-xl font-semibold text-base transition">
+          Browse Services
+        </a>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4" data-aos="fade-left" data-aos-delay="150">
+      <div class="glass rounded-2xl p-6 text-center"><div class="text-4xl font-extrabold text-teal-300 mb-1" data-count="@ViewBag.ServiceCount">0+</div><div class="text-blue-100 text-sm font-medium">Services Listed</div></div>
+      <div class="glass rounded-2xl p-6 text-center"><div class="text-4xl font-extrabold text-teal-300 mb-1" data-count="@ViewBag.Categories">0</div><div class="text-blue-100 text-sm font-medium">Categories</div></div>
+      <div class="glass rounded-2xl p-6 text-center"><div class="text-4xl font-extrabold text-teal-300 mb-1" data-count="@ViewBag.FreeCount">0</div><div class="text-blue-100 text-sm font-medium">Free Services</div></div>
+      <div class="glass rounded-2xl p-6 text-center"><div class="text-4xl font-extrabold text-teal-300 mb-1">24/7</div><div class="text-blue-100 text-sm font-medium">Crisis Support</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SEARCH BAR -->
+<section class="max-w-3xl mx-auto px-4 -mt-7 relative z-30">
+  <form asp-controller="Services" asp-action="Index" method="get" class="bg-white rounded-2xl shadow-2xl p-3 flex flex-col sm:flex-row gap-2 border border-gray-100">
+    <input name="query" placeholder="What do you need help with? e.g. mental health, housing, food..." class="flex-1 px-4 py-3 text-sm text-gray-800 focus:outline-none rounded-xl bg-gray-50 border border-gray-100 focus:border-blue-300 focus:ring-2 focus:ring-blue-100"/>
+    <button type="submit" class="btn-primary text-white font-semibold px-6 py-3 rounded-xl text-sm whitespace-nowrap">Search Services</button>
+  </form>
+</section>
+
+<!-- CATEGORIES -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+  <div class="text-center mb-12" data-aos="fade-up">
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3">Browse by Category</h2>
+    <p class="text-gray-500 text-lg">Select the type of support you are looking for</p>
+  </div>
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+    @{var cats=new[]{
+      ("Health","bg-red-50","text-red-600","border-red-100","hover:bg-red-100","M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"),
+      ("Mental Health","bg-purple-50","text-purple-600","border-purple-100","hover:bg-purple-100","M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"),
+      ("Housing","bg-orange-50","text-orange-600","border-orange-100","hover:bg-orange-100","M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"),
+      ("Food","bg-green-50","text-green-600","border-green-100","hover:bg-green-100","M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"),
+      ("Employment","bg-blue-50","text-blue-600","border-blue-100","hover:bg-blue-100","M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"),
+      ("Legal","bg-slate-50","text-slate-600","border-slate-100","hover:bg-slate-100","M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"),
+    };}
+    @foreach(var(cat,bg,text,border,hover,path) in cats){
+      <a asp-controller="Services" asp-action="Index" asp-route-category="@cat"
+         class="@bg border @border @hover rounded-2xl p-5 flex flex-col items-center text-center transition card-hover cursor-pointer group" data-aos="zoom-in">
+        <div class="@bg w-12 h-12 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+          <svg class="w-6 h-6 @text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="@path"/></svg>
+        </div>
+        <span class="@text font-semibold text-sm">@cat</span>
+      </a>
+    }
+  </div>
+</section>
+
+<!-- HOW IT WORKS with image -->
+<section class="bg-white py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-16 items-center">
+    <div data-aos="fade-right">
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3">How CareLink AI Works</h2>
+      <p class="text-gray-500 mb-10 text-lg">Three simple steps to find the right support using AI</p>
+      <div class="space-y-6">
+        @{var steps=new[]{("01","Describe Your Needs","Tell our AI what kind of support you need in plain, everyday language.","from-blue-500 to-blue-600"),("02","AI Matches Services","DeepSeek AI analyses your description and ranks the most relevant services from our database.","from-teal-500 to-teal-600"),("03","Connect and Get Help","Contact the matched service directly using the phone number or website provided.","from-green-500 to-green-600")};}
+        @foreach(var(num,title,desc,grad) in steps){
+          <div class="flex gap-5 items-start">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br @grad flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-lg">@num</div>
+            <div><h3 class="font-bold text-gray-900 mb-1">@title</h3><p class="text-gray-500 text-sm leading-relaxed">@desc</p></div>
+          </div>
+        }
+      </div>
+    </div>
+    <div data-aos="fade-left" class="relative">
+      <div class="absolute -inset-4 bg-gradient-to-br from-blue-100 to-teal-100 rounded-3xl"></div>
+      <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=800&auto=format&fit=crop&q=80" class="relative rounded-2xl shadow-2xl w-full object-cover h-80" alt="Support worker"/>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED SERVICES -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+  <div class="flex justify-between items-center mb-10" data-aos="fade-up">
+    <div>
+      <h2 class="text-3xl font-extrabold text-gray-900">Featured Services</h2>
+      <p class="text-gray-500 mt-1">Trusted community support organisations</p>
+    </div>
+    <a asp-controller="Services" asp-action="Index" class="text-blue-600 hover:underline font-medium text-sm hidden sm:block">View all services →</a>
+  </div>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    @foreach(var s in (IEnumerable<CareLink.Models.Service>)ViewBag.Featured)
+    {
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm card-hover flex flex-col overflow-hidden" data-aos="fade-up">
+        <div class="h-40 bg-gradient-to-br from-blue-500/10 to-teal-500/10 relative overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&auto=format&fit=crop&q=60" class="w-full h-full object-cover opacity-60" alt="@s.Title"/>
+          <div class="absolute inset-0 bg-gradient-to-t from-white/80 to-transparent"></div>
+          <div class="absolute bottom-3 left-4 flex gap-2">
+            <span class="bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-full">@s.Category</span>
+            @if(s.IsFree){<span class="bg-green-500 text-white text-xs font-semibold px-3 py-1 rounded-full">Free</span>}
+          </div>
+        </div>
+        <div class="p-5 flex-1 flex flex-col">
+          <h3 class="font-bold text-gray-900 mb-2">@s.Title</h3>
+          <p class="text-gray-500 text-sm mb-4 line-clamp-2 flex-1">@s.Description</p>
+          <div class="flex items-center gap-1.5 text-xs text-gray-400 mb-4">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+            @s.Suburb, @s.State
+          </div>
+          <a asp-controller="Services" asp-action="Details" asp-route-id="@s.Id" class="block text-center bg-gray-50 hover:bg-blue-50 hover:text-blue-700 text-gray-700 text-sm font-semibold py-2.5 rounded-xl transition">View Details</a>
+        </div>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- AI PROMO -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+  <div class="relative rounded-3xl overflow-hidden" data-aos="fade-up">
+    <div class="absolute inset-0"><img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1200&auto=format&fit=crop&q=80" class="w-full h-full object-cover" alt="Community"/></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-blue-900/95 to-teal-800/90"></div>
+    <div class="relative px-8 py-14 md:px-16 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="text-white">
+        <h3 class="text-2xl md:text-3xl font-extrabold mb-2">Not sure where to start?</h3>
+        <p class="text-blue-100 text-lg">Our DeepSeek AI analyses your situation and finds the best services in seconds.</p>
+      </div>
+      <a asp-controller="Services" asp-action="AiMatch" class="btn-primary text-white font-bold px-8 py-4 rounded-2xl text-lg whitespace-nowrap shadow-2xl flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+        Try AI Matcher — It's Free
+      </a>
+    </div>
+  </div>
+</section>
